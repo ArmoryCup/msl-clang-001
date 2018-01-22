@@ -11,6 +11,7 @@ typedef struct node {
 
 const char SPACE = 32;
 const char NULL_CHARACTER = '\0';
+FILE *file_write = 0;
 
 Node *createLeaf(char *word) {
     struct node *leaf = (Node *) malloc(sizeof(Node));
@@ -58,18 +59,6 @@ int searchWord(Node *node1, char *word) {
         searchWord(node1->right, word);
 }
 
-/*
- Given a binary search tree, print out
- its data elements in increasing
- sorted order.
-*/
-void printTree(Node *node) {
-    if (node == NULL) return;
-
-    printTree(node->left);
-    printf("\n%s: %d", node->word, node->count);
-    printTree(node->right);
-}
 
 void deleteTree(Node *node) {
     if (node == NULL) return;
@@ -82,13 +71,13 @@ void deleteTree(Node *node) {
     node = NULL;
 }
 
-Node *buildTree() {
+Node *buildTree(FILE *file) {
     char word[22];
     unsigned int i = 0;
     char letter;
     Node *node1 = NULL;;
 
-    FILE *file = fopen("/home/yushitosh/CLionProjects/msl-clang-001/input01.txt", "r");
+
     if (file == NULL) {
         printf("Error! File cannot be opened");
         exit(1);
@@ -128,20 +117,39 @@ char insertCurrentWord(char *word, const int size) {
     return temp;
 }
 
+void generateOutput(Node *root) {
+    if (root == NULL) return;
+
+    generateOutput(root->left);
+    fprintf(file_write, "\n%s: %d", root->word, root->count);
+    generateOutput(root->right);
+
+
+}
+
+/*
+ Given a binary search tree, print out
+ its data elements in increasing
+ sorted order.
+*/
+void printTree(Node *node) {
+    if (node == NULL) return;
+
+    printTree(node->left);
+    printf("\n%s: %d", node->word, node->count);
+    printTree(node->right);
+}
+
 int main(int argc, char **argv) {
 
-//    Node *root = createLeaf("one");
-//    insertWord(root, "go");
-//    insertWord(root, "two");
-//    insertWord(root, "three");
-//    insertWord(root, "two");
-//    insertWord(root, "three");
+    FILE *file_read = fopen("/home/yushitosh/CLionProjects/msl-clang-001/input01.txt", "r");
+    file_write = fopen("/home/yushitosh/CLionProjects/msl-clang-001/myoutput01.txt", "w");
 
-//    deleteTree(root);
     Node *root = 0;
-    root = buildTree();
+    root = buildTree(file_read);
 
-    printTree(root);
+    generateOutput(root);
+    fclose(file_write);
     deleteTree(root);
     exit(0);
 }
