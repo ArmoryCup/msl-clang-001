@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
 //    insertWord(root, "three");
 
 
-
+//
     char word[20];
     char c;
     FILE *input;
