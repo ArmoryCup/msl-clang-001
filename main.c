@@ -4,13 +4,13 @@
 
 typedef struct node {
     unsigned int count;
-    const char *word;
+    char *word;
     struct node *left;
     struct node *right;
 } Node;
 
-static const char SPACE = 32;
-
+const char SPACE = 32;
+const char NULL_CHARACTER = '\0';
 
 Node *createLeaf(char *word) {
     struct node *leaf = (Node *) malloc(sizeof(Node));
@@ -82,11 +82,11 @@ void deleteTree(Node *node) {
     node = NULL;
 }
 
-Node *buildTree( Node *node1) {
+Node *buildTree() {
     char word[22];
     unsigned int i = 0;
     char letter;
-
+    Node *node1 = NULL;;
 
     FILE *file = fopen("/home/yushitosh/CLionProjects/msl-clang-001/input01.txt", "r");
     if (file == NULL) {
@@ -95,30 +95,37 @@ Node *buildTree( Node *node1) {
     }
 
 
-
-    while (fgetc(file)!=EOF) {
+    do {
         letter = fgetc(file);
-        switch (letter) {
-            case 32: {
-                char temp[i + 1];
-                int size = i;
-                strncpy(temp, word, size);
-                temp[size] = '\n';
-                if (node1 != 0)
-                    insertWord(node1, temp);
-                else
-                    node1 = createLeaf(temp);
+        if (letter == SPACE || letter == '\n') {
 
-                i = 0;
-                break;
-            }
-            default: {
-                word[i] = letter;
-                ++i;
-            }
+            char temp[i + 1];
+            strncpy(temp, word, i);
+            temp[i] = NULL_CHARACTER;
+
+            if (node1 != 0)
+                insertWord(node1, temp);
+            else
+                node1 = createLeaf(temp);
+
+            i = 0;
+        } else {
+            word[i] = letter;
+            ++i;
         }
-    }
+
+    } while (letter != '\n');
+
     fclose(file);
+
+    return node1;
+}
+
+char insertCurrentWord(char *word, const int size) {
+    char temp[size + 1];
+    strncpy(temp, word, size);
+    temp[size] = '\n';
+    return temp;
 }
 
 int main(int argc, char **argv) {
@@ -132,10 +139,9 @@ int main(int argc, char **argv) {
 
 //    deleteTree(root);
     Node *root = 0;
+    root = buildTree();
 
-
-    buildTree(root);
-
-
+    printTree(root);
+    deleteTree(root);
     exit(0);
 }
