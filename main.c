@@ -151,5 +151,6 @@ int main(int argc, char **argv) {
     generateOutput(root);
     fclose(file_write);
     deleteTree(root);
+
     exit(0);
 }
